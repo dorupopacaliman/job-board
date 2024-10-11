@@ -2,7 +2,12 @@ import { createContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LogoutDialog } from '../components/LogoutDialog';
 import { User } from '../constants/types';
-import { getLoggedInUser, login as loginService, logout as logoutService, signup as signupService } from '../services/authentication';
+import {
+  getLoggedInUser,
+  login as loginService,
+  logout as logoutService,
+  signup as signupService,
+} from '../services/authentication';
 type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
@@ -20,37 +25,39 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(false);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     setIsLoadingUser(true);
-    getLoggedInUser().then(user => {
-      setUser(user);
-    }).finally(() => {
-      setIsLoadingUser(false);
-    });
+    getLoggedInUser()
+      .then(user => {
+        setUser(user);
+      })
+      .finally(() => {
+        setIsLoadingUser(false);
+      });
   }, []);
 
   const signup = async (email: string, password: string) => {
-    await signupService(email, password).then(user => {
+    return signupService(email, password).then(user => {
       setUser(user);
-      navigate(location.state?.location ?? '/');
+      navigate(location.state?.from ?? '/');
     });
   };
 
   const login = async (email: string, password: string) => {
-    await loginService(email, password).then(user => {
+    return loginService(email, password).then(user => {
       setUser(user);
-      navigate(location.state?.location ?? '/');
+      navigate(location.state.from ?? '/');
     });
   };
 
   const logout = async () => {
     setIsLogoutModalOpen(true);
-    await logoutService()
+    return logoutService()
       .then(() => {
         setUser(null);
       })

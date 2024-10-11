@@ -39,6 +39,10 @@ const NavBar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <Link to="/jobs/my-listings">My Listings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -69,6 +73,10 @@ const NavBar = () => {
                   </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuSubContent>
+                      <DropdownMenuItem asChild>
+                        <Link to="/jobs/my-listings">My Listings</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
@@ -120,11 +128,9 @@ type NavItemProps = {
 
 const NavItem = ({ to, label }: NavItemProps) => {
   return (
-    <div>
-      <Button asChild variant="ghost">
-        <Link to={to}>{label}</Link>
-      </Button>
-    </div>
+    <Button asChild variant="ghost">
+      <Link to={to}>{label}</Link>
+    </Button>
   );
 };
 

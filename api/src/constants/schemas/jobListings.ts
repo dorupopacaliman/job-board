@@ -1,10 +1,6 @@
-import z from "zod"
-import {
-  JOB_LISTING_TYPES,
-  JOB_LISTING_EXPERIENCE_LEVELS,
-  JOB_LISTING_DURATIONS,
-} from "../types"
-import { createUnionSchema } from "../../lib/zodCreateUnionSchema"
+import z from 'zod';
+import { createUnionSchema } from '../../lib/zodCreateUnionSchema';
+import { JOB_LISTING_DURATIONS, JOB_LISTING_EXPERIENCE_LEVELS, JOB_LISTING_TYPES } from '../types';
 
 export const jobListingFormSchema = z.object({
   title: z.string().nonempty(),
@@ -16,8 +12,8 @@ export const jobListingFormSchema = z.object({
   salary: z.number().int().positive(),
   shortDescription: z.string().max(200).nonempty(),
   description: z.string().nonempty(),
-})
+});
 
 export const createPublishPaymentIntentSchema = z.object({
   duration: createUnionSchema(JOB_LISTING_DURATIONS),
-})
+});
