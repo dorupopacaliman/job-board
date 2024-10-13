@@ -8,7 +8,7 @@ import { loginSchema } from '@backend/constants/schemas/users';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { z } from 'zod';
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -19,7 +19,6 @@ export const LoginForm = () => {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
-  const location = useLocation();
 
   const onSubmit = async (values: LoginValues) => {
     await login(values.email, values.password).catch(error => {

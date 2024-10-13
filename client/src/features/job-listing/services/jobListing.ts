@@ -1,5 +1,6 @@
 import { baseApi } from '@/services/baseApi';
 import { jobListingFormSchema } from '@backend/constants/schemas/jobListings';
+import { JOB_LISTING_DURATIONS } from '@backend/constants/types';
 import { z } from 'zod';
 import { jobListingSchema } from '../constants/schemas';
 
@@ -23,4 +24,10 @@ export const getJobListing = async (id: string) => {
 
 export const editJobListing = async (id: string, data: z.infer<typeof jobListingFormSchema>) => {
   return baseApi.put(`/job-listings/${id}`, data).then(res => jobListingFormSchema.parseAsync(res.data));
+};
+
+export const createPublishPaymentIntent = async (id: string, duration: (typeof JOB_LISTING_DURATIONS)[number]) => {
+  return baseApi
+    .post<{ clientSecret: string }>(`/job-listings/${id}/create-publish-payment-intent`, { duration })
+    .then(res => res.data);
 };
