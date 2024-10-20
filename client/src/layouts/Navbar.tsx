@@ -27,6 +27,7 @@ const NavBar = () => {
           <ThemeToggleButton />
           <div className="hidden sm:flex">
             <NavItem to="/tasks" label="Task Board" />
+            <NavItem to="/jobs" label="Job Listings" />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -63,6 +64,9 @@ const NavBar = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <Link to="/tasks">Task Board</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/jobs">Job Listings</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {user ? (
