@@ -1,9 +1,9 @@
 import { JOB_LISTING_DURATIONS } from "../constants/types"
 import { assertUnreachable } from "./assertUnreachable"
 
-export function getJobListingPriceInCents(
+export const getJobListingPriceInCents = (
   duration: (typeof JOB_LISTING_DURATIONS)[number]
-) {
+) => {
   switch (duration) {
     case 30:
       return 10000

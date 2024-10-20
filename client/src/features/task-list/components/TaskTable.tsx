@@ -1,19 +1,22 @@
-import { Button } from "@/components/ui/button"
-import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table"
+import { Button } from '@/components/ui/button';
+import { DataTable, DataTableColumnHeader } from '@/components/ui/data-table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useLocalStorage } from "@/hooks/useLocalStorage"
-import { createColumnHelper } from "@tanstack/react-table"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ToastAction } from '@/components/ui/toast';
+import { useToast } from '@/components/ui/use-toast';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { createColumnHelper } from '@tanstack/react-table';
 import {
   ArrowDown,
   ArrowLeft,
@@ -24,99 +27,78 @@ import {
   Square,
   Timer,
   User,
-} from "lucide-react"
-import { useMemo } from "react"
-import { Task } from "../constants/types"
-import {
-  TASK_STATUSES,
-  TASK_PRIORITIES,
-  TASK_CATEGORIES,
-} from "../constants/constants"
-import {
-  DialogHeader,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { TaskForm } from ".."
-import { useToast } from "@/components/ui/use-toast"
-import { ToastAction } from "@/components/ui/toast"
+} from 'lucide-react';
+import { useMemo } from 'react';
+import { TaskForm } from '..';
+import { TASK_CATEGORIES, TASK_PRIORITIES, TASK_STATUSES } from '../constants/constants';
+import { Task } from '../constants/types';
 
-const columnHelper = createColumnHelper<Task>()
+const columnHelper = createColumnHelper<Task>();
 
 const STATIC_COLUMNS = [
-  columnHelper.accessor("title", {
-    header: ({ column }) => (
-      <DataTableColumnHeader title="Title" column={column} />
-    ),
+  columnHelper.accessor('title', {
+    header: ({ column }) => <DataTableColumnHeader title="Title" column={column} />,
   }),
-  columnHelper.accessor("status", {
-    header: ({ column }) => (
-      <DataTableColumnHeader title="Status" column={column} />
-    ),
+  columnHelper.accessor('status', {
+    header: ({ column }) => <DataTableColumnHeader title="Status" column={column} />,
     cell: ({ getValue }) => {
-      const status = getValue()
-      const Icon = getStatusIcon(status)
+      const status = getValue();
+      const Icon = getStatusIcon(status);
 
       return (
         <span className="flex gap-2 items-center">
           <Icon className="w-4 h-4" /> {status}
         </span>
-      )
+      );
     },
   }),
-  columnHelper.accessor("priority", {
-    header: ({ column }) => (
-      <DataTableColumnHeader title="Priority" column={column} />
-    ),
+  columnHelper.accessor('priority', {
+    header: ({ column }) => <DataTableColumnHeader title="Priority" column={column} />,
     sortingFn: (rowA, rowB) => {
-      const a = rowA.getValue("priority")
-      const b = rowB.getValue("priority")
-      if (a === b) return 0
-      if (a === "High") return -1
-      if (b === "High") return 1
-      if (a === "Medium") return -1
-      if (b === "Medium") return 1
-      return 0
+      const a = rowA.getValue('priority');
+      const b = rowB.getValue('priority');
+      if (a === b) return 0;
+      if (a === 'High') return -1;
+      if (b === 'High') return 1;
+      if (a === 'Medium') return -1;
+      if (b === 'Medium') return 1;
+      return 0;
     },
     cell: ({ getValue }) => {
-      const priority = getValue()
-      const Icon = getPriorityIcon(priority)
+      const priority = getValue();
+      const Icon = getPriorityIcon(priority);
       return (
         <span className="flex gap-2 items-center">
           <Icon className="w-4 h-4" /> {priority}
         </span>
-      )
+      );
     },
   }),
-  columnHelper.accessor("category", {
-    header: ({ column }) => (
-      <DataTableColumnHeader title="Category" column={column} />
-    ),
+  columnHelper.accessor('category', {
+    header: ({ column }) => <DataTableColumnHeader title="Category" column={column} />,
     cell: ({ getValue }) => {
-      const category = getValue()
-      const Icon = getCategoryIcon(category)
+      const category = getValue();
+      const Icon = getCategoryIcon(category);
       return (
         <span className="flex gap-2 items-center">
           <Icon className="w-4 h-4" /> {category}
         </span>
-      )
+      );
     },
   }),
-]
+];
 
 type getColumnsParams = {
-  removeTask: (id: string) => void
-  updateTask: (id: string, task: Partial<Omit<Task, "id">>) => void
-}
+  removeTask: (id: string) => void;
+  updateTask: (id: string, task: Partial<Omit<Task, 'id'>>) => void;
+};
 
-function getColumns({ removeTask, updateTask }: getColumnsParams) {
+const getColumns = ({ removeTask, updateTask }: getColumnsParams) => {
   return STATIC_COLUMNS.concat([
     columnHelper.display({
-      id: "actions",
+      id: 'actions',
       cell: ({ row }) => {
-        const task = row.original
+        const task = row.original;
 
         return (
           <Dialog>
@@ -150,28 +132,23 @@ function getColumns({ removeTask, updateTask }: getColumnsParams) {
                 <DialogTrigger asChild>
                   <DropdownMenuItem>Edit</DropdownMenuItem>
                 </DialogTrigger>
-                <DropdownMenuItem onClick={() => removeTask(task.id)}>
-                  Delete
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => removeTask(task.id)}>Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <TaskEditDialog
-              task={task}
-              updateTask={taskFields => updateTask(task.id, taskFields)}
-            />
+            <TaskEditDialog task={task} updateTask={taskFields => updateTask(task.id, taskFields)} />
           </Dialog>
-        )
+        );
       },
     }),
-  ])
-}
+  ]);
+};
 
 type TaskEditProps = {
-  task: Task
-  updateTask: (task: Partial<Omit<Task, "id">>) => void
-}
+  task: Task;
+  updateTask: (task: Partial<Omit<Task, 'id'>>) => void;
+};
 
-function TaskEditDialog({ task, updateTask }: TaskEditProps) {
+const TaskEditDialog = ({ task, updateTask }: TaskEditProps) => {
   return (
     <DialogContent>
       <DialogHeader>
@@ -179,13 +156,13 @@ function TaskEditDialog({ task, updateTask }: TaskEditProps) {
       </DialogHeader>
       <TaskForm onSubmit={updateTask} initialTask={task} />
     </DialogContent>
-  )
-}
+  );
+};
 
-export function TaskTable() {
-  const [tasks, setTasks] = useLocalStorage<Task[]>("tasks", [])
+export const TaskTable = () => {
+  const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
 
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const columns = useMemo(() => {
     return getColumns({
@@ -194,15 +171,15 @@ export function TaskTable() {
           return tasks.filter((task, index) => {
             if (task.id === id) {
               toast({
-                title: "Task Deleted",
+                title: 'Task Deleted',
                 description: `${task.title} was deleted`,
                 action: (
                   <ToastAction
                     onClick={() =>
                       setTasks(currentTasks => {
-                        const newArray = [...currentTasks]
-                        newArray.splice(index, 0, task)
-                        return newArray
+                        const newArray = [...currentTasks];
+                        newArray.splice(index, 0, task);
+                        return newArray;
                       })
                     }
                     altText="Recreate the task"
@@ -210,96 +187,86 @@ export function TaskTable() {
                     Undo
                   </ToastAction>
                 ),
-              })
-              return false
+              });
+              return false;
             }
 
-            return true
-          })
-        })
+            return true;
+          });
+        });
       },
       updateTask: (id: string, updatedTask: Partial<Task>) => {
         setTasks(tasks => {
           return tasks.map(task => {
             if (task.id === id) {
-              return { ...task, ...updatedTask }
+              return { ...task, ...updatedTask };
             }
-            return task
-          })
-        })
+            return task;
+          });
+        });
       },
-    })
-  }, [setTasks, toast])
+    });
+  }, [setTasks, toast]);
 
-  return (
-    <DataTable<Task>
-      columns={columns}
-      data={tasks}
-      getRowKey={row => row.original.id}
-    />
-  )
-}
+  return <DataTable<Task> columns={columns} data={tasks} getRowKey={row => row.original.id} />;
+};
 
-function getStatusIcon(status: Task["status"]) {
+const getStatusIcon = (status: Task['status']) => {
   switch (status) {
-    case "Done":
-      return CheckSquare
-    case "Todo":
-      return Square
-    case "In Progress":
-      return Timer
+    case 'Done':
+      return CheckSquare;
+    case 'Todo':
+      return Square;
+    case 'In Progress':
+      return Timer;
   }
-}
+};
 
-function getPriorityIcon(priority: Task["priority"]) {
+const getPriorityIcon = (priority: Task['priority']) => {
   switch (priority) {
-    case "High":
-      return ArrowUp
-    case "Medium":
-      return ArrowLeft
-    case "Low":
-      return ArrowDown
+    case 'High':
+      return ArrowUp;
+    case 'Medium':
+      return ArrowLeft;
+    case 'Low':
+      return ArrowDown;
   }
-}
+};
 
-function getCategoryIcon(priority: Task["category"]) {
-  switch (priority) {
-    case "Personal":
-      return User
-    case "Work":
-      return Briefcase
+const getCategoryIcon = (category: Task['category']) => {
+  switch (category) {
+    case 'Personal':
+      return User;
+    case 'Work':
+      return Briefcase;
   }
-}
+};
 
 type DropDownEditOptionsProps<T> = {
-  label: string
-  selectedOption: T
-  onSelect: (selectedOption: T) => void
-  options: readonly T[]
-}
+  label: string;
+  selectedOption: T;
+  onSelect: (selectedOption: T) => void;
+  options: readonly T[];
+};
 
-function DropDownEditOptions<T extends string>({
+const DropDownEditOptions = <T extends string>({
   label,
   selectedOption,
   onSelect,
   options,
-}: DropDownEditOptionsProps<T>) {
+}: DropDownEditOptionsProps<T>) => {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>{label}</DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         <DropdownMenuRadioGroup value={selectedOption}>
           {options.map(option => (
-            <DropdownMenuRadioItem
-              onSelect={() => onSelect(option)}
-              key={option}
-              value={option}
-            >
+            <DropdownMenuRadioItem onSelect={() => onSelect(option)} key={option} value={option}>
               {option}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuSubContent>
     </DropdownMenuSub>
-  )
-}
+  );
+};

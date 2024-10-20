@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 
-export function PrivatePage({ children }: { children: ReactNode }) {
+export const PrivatePage = ({ children }: { children: ReactNode }) => {
   const { user, isLoadingUser } = useAuth();
   const location = useLocation();
 

@@ -1,10 +1,10 @@
-import { PageHeader } from "@/components/ui/PageHeader"
-import { Button } from "@/components/ui/button"
-import { TaskTable } from "@/features/task-list"
-import { Plus } from "lucide-react"
-import { Link } from "react-router-dom"
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/button';
+import { TaskTable } from '@/features/task-list';
+import { Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-export function TaskListPage() {
+export const TaskListPage = () => {
   return (
     <>
       <PageHeader
@@ -20,5 +20,5 @@ export function TaskListPage() {
       </PageHeader>
       <TaskTable />
     </>
-  )
-}
+  );
+};

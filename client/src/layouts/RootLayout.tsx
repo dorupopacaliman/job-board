@@ -4,7 +4,7 @@ import { AuthProvider } from '@/features/authentication';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import NavBar from './Navbar';
 
-export function RootLayout() {
+export const RootLayout = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
@@ -21,4 +21,4 @@ export function RootLayout() {
       </AuthProvider>
     </ThemeProvider>
   );
-}
+};

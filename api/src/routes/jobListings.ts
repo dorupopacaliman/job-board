@@ -68,8 +68,8 @@ jobListingsRouter.post(
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: getJobListingPriceInCents(body.duration),
-      currency: "usd",
+      amount: getJobListingPriceInCents(body.duration) ?? 0,
+      currency: 'usd',
       automatic_payment_methods: {
         enabled: true,
       },

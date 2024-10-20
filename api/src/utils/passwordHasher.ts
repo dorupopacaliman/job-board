@@ -4,7 +4,7 @@ const ITERATIONS = 1000
 const KEY_LENGTH = 64
 const ALGORITHM = "sha512"
 
-export function hashPassword(password: string) {
+export const hashPassword = (password: string) => {
   const salt = crypto.randomBytes(16).toString("hex")
   const hash = crypto
     .pbkdf2Sync(password, salt, ITERATIONS, KEY_LENGTH, ALGORITHM)
@@ -13,7 +13,7 @@ export function hashPassword(password: string) {
   return { salt, hash }
 }
 
-export function verifyPassword(password: string, salt: string, hash: string) {
+export const verifyPassword = (password: string, salt: string, hash: string) => {
   const hashToVerify = crypto
     .pbkdf2Sync(password, salt, ITERATIONS, KEY_LENGTH, ALGORITHM)
     .toString("hex")

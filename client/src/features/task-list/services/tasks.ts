@@ -1,43 +1,37 @@
-import { Task } from "../constants/types"
+import { Task } from '../constants/types';
 
-const LOCAL_STORAGE_KEY = "tasks"
+const LOCAL_STORAGE_KEY = 'tasks';
 
-export function getTasks(): Task[] {
-  const tasks = localStorage.getItem(LOCAL_STORAGE_KEY)
+export const getTasks = (): Task[] => {
+  const tasks = localStorage.getItem(LOCAL_STORAGE_KEY);
 
-  if (tasks == null) return []
+  if (tasks == null) return [];
 
-  return JSON.parse(tasks)
-}
+  return JSON.parse(tasks);
+};
 
-export function addTask(task: Omit<Task, "id">) {
-  const tasks = getTasks()
+export const addTask = (task: Omit<Task, 'id'>) => {
+  const tasks = getTasks();
 
-  localStorage.setItem(
-    LOCAL_STORAGE_KEY,
-    JSON.stringify([...tasks, { id: crypto.randomUUID(), ...task }])
-  )
-}
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([...tasks, { id: crypto.randomUUID(), ...task }]));
+};
 
-export function removeTask(id: string) {
-  const tasks = getTasks()
+export const removeTask = (id: string) => {
+  const tasks = getTasks();
 
-  localStorage.setItem(
-    LOCAL_STORAGE_KEY,
-    JSON.stringify(tasks.filter(task => task.id !== id))
-  )
-}
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tasks.filter(task => task.id !== id)));
+};
 
-export function updateTask(id: string, taskFields: Partial<Task>) {
-  const tasks = getTasks()
+export const updateTask = (id: string, taskFields: Partial<Task>) => {
+  const tasks = getTasks();
 
   localStorage.setItem(
     LOCAL_STORAGE_KEY,
     JSON.stringify(
       tasks.map(task => {
-        if (task.id === id) return { ...task, ...taskFields }
-        return task
+        if (task.id === id) return { ...task, ...taskFields };
+        return task;
       })
     )
-  )
-}
+  );
+};

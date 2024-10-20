@@ -1,59 +1,38 @@
-import { z } from "zod"
-import {
-  TASK_CATEGORIES,
-  TASK_PRIORITIES,
-  TASK_STATUSES,
-} from "../constants/constants"
-import { Control, FieldValues, Path, PathValue, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Form,
-} from "@/components/ui/form"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-} from "@/components/ui/select"
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Control, FieldValues, Path, PathValue, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { TASK_CATEGORIES, TASK_PRIORITIES, TASK_STATUSES } from '../constants/constants';
 
-type TaskFormValues = z.infer<typeof formSchema>
+type TaskFormValues = z.infer<typeof formSchema>;
 
 type TaskFormProps = {
-  initialTask?: TaskFormValues
-  onSubmit: (task: TaskFormValues) => void
-}
+  initialTask?: TaskFormValues;
+  onSubmit: (task: TaskFormValues) => void;
+};
 
 const formSchema = z.object({
   title: z.string().nonempty(),
   priority: z.enum(TASK_PRIORITIES),
   status: z.enum(TASK_STATUSES),
   category: z.enum(TASK_CATEGORIES),
-})
+});
 
 const DEFAULT_VALUES: TaskFormValues = {
-  title: "",
-  category: "Work",
-  priority: "Medium",
-  status: "Todo",
-}
+  title: '',
+  category: 'Work',
+  priority: 'Medium',
+  status: 'Todo',
+};
 
-export function TaskForm({
-  initialTask = DEFAULT_VALUES,
-  onSubmit,
-}: TaskFormProps) {
+export const TaskForm = ({ initialTask = DEFAULT_VALUES, onSubmit }: TaskFormProps) => {
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialTask,
-  })
+  });
 
   return (
     <Form {...form}>
@@ -72,46 +51,26 @@ export function TaskForm({
               </FormItem>
             )}
           />
-          <TaskSelectFormField
-            control={form.control}
-            name="status"
-            label="Status"
-            options={TASK_STATUSES}
-          />
-          <TaskSelectFormField
-            control={form.control}
-            name="category"
-            label="Category"
-            options={TASK_CATEGORIES}
-          />
-          <TaskSelectFormField
-            control={form.control}
-            name="priority"
-            label="Priority"
-            options={TASK_PRIORITIES}
-          />
+          <TaskSelectFormField control={form.control} name="status" label="Status" options={TASK_STATUSES} />
+          <TaskSelectFormField control={form.control} name="category" label="Category" options={TASK_CATEGORIES} />
+          <TaskSelectFormField control={form.control} name="priority" label="Priority" options={TASK_PRIORITIES} />
         </div>
         <div className="flex gap-2 justify-end">
           <Button type="submit">Save</Button>
         </div>
       </form>
     </Form>
-  )
-}
+  );
+};
 
 type TaskSelectFormFieldProps<T extends FieldValues> = {
-  label: string
-  control: Control<T>
-  name: Path<T>
-  options: readonly PathValue<T, Path<T>>[]
-}
+  label: string;
+  control: Control<T>;
+  name: Path<T>;
+  options: readonly PathValue<T, Path<T>>[];
+};
 
-function TaskSelectFormField<T extends FieldValues>({
-  label,
-  control,
-  name,
-  options,
-}: TaskSelectFormFieldProps<T>) {
+const TaskSelectFormField = <T extends FieldValues>({ label, control, name, options }: TaskSelectFormFieldProps<T>) => {
   return (
     <FormField
       control={control}
@@ -119,10 +78,7 @@ function TaskSelectFormField<T extends FieldValues>({
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
-          <Select
-            onValueChange={val => field.onChange(val as PathValue<T, Path<T>>)}
-            defaultValue={field.value}
-          >
+          <Select onValueChange={val => field.onChange(val as PathValue<T, Path<T>>)} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger>
                 <SelectValue />
@@ -142,5 +98,5 @@ function TaskSelectFormField<T extends FieldValues>({
         </FormItem>
       )}
     />
-  )
-}
+  );
+};

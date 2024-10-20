@@ -10,7 +10,7 @@ declare module "express-session" {
   }
 }
 
-export function setupSession(app: Express) {
+export const setupSession = (app: Express) => {
   app.use(
     session({
       secret: env.SESSION_SECRET,
